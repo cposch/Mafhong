@@ -26,3 +26,6 @@
 *.exe
 *.out
 *.app
+
+#SFML-Ordner
+SFML-2.1
