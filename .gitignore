@@ -25,5 +25,11 @@
 *.out
 *.app
 
-#SFML-Ordner
+*.dll
+*.user
+
+#Ordner
 SFML-2.1
+Assets
+Mafhong/Debug
+Mafhong/Release
