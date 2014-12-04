@@ -27,9 +27,14 @@
 
 *.dll
 *.user
+*.ilk
+*.tlog
+
 
 #Ordner
 SFML-2.1
 Assets
 Mafhong/Debug
 Mafhong/Release
+Mafhong/Mafhong/Debug
+Mafhong/Mafhong/Release
