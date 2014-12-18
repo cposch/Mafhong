@@ -2,6 +2,16 @@
 #include<conio.h>
 #include<iostream>
 
+class Position
+{
+public:
+	int x1;
+	int x2;
+	int y1;
+	int y2;
+	int z;
+};
+
 class Stone
 {
 public:
@@ -25,30 +35,18 @@ public:
 		stone.setFillColor(color);
 	}
 
-	void SetTablePosition(int x, int y, int z = 1)
+	void SetTablePosition(int x1, int y1, int x2 = -1, int y2 = -1, int z = 1)
 	{
-		tablePosition.x = x;
-		tablePosition.y = y;
-		tablePosition.z = z;
+		tp.x1 = x1;
+		tp.x2 = x2;
+		tp.y1 = y1;
+		tp.y2 = y2;
+		tp.z = z;
 	}
 
-	sf::Vector3i GetTablePosition()
+	Position GetTablePosition()
 	{
-		return tablePosition;
-	}
-	
-	void SetTablePosition2(int x1, int y1, int x2, int y2, int z = 1)
-	{
-		tablePosition.x = x1;
-		tablePosition.y = y1;
-		tablePosition.z = z;
-		tablePosition2.x = x2;
-		tablePosition2.y = y2;
-	}
-
-	sf::Vector3i GetTablePosition2()
-	{
-		return tablePosition;
+		return tp;
 	}
 
 	void SetPosition(float x, float y)
@@ -99,6 +97,7 @@ private:
 	unsigned int value;
 	sf::Vector3i tablePosition;
 	sf::Vector2i tablePosition2;
+	Position tp;
 	bool vorhanden;
 };
 
@@ -115,15 +114,18 @@ int main()
 {	
 	const int stonemembers = 8;
 	int nochVorhanden = stonemembers;
-	int nachbarn = 0;
+	bool nachbarl = false;
+	bool nachbarr = false;
 	sf::Vector3i myposition;
 	sf::Vector3i position;
+	Position myposition2;
+	Position position2;
 	sf::Vector2i mousePosition;
 	int i;
 	sf::Vector2i check;
 	unsigned int value = 0;
 	int stonenumber = -1;
-	int ausgewaehlt = 0;
+	bool ausgewaehlt = false;
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Mafhong");
 	window.setFramerateLimit(60);
@@ -216,7 +218,8 @@ int main()
 			if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
 			{	
 				std::cout<<mousePosition.x<<" "<<mousePosition.y<<"\n";
-				nachbarn = 0;
+				nachbarl = false;
+				nachbarr = false;
 				
 				for(i = 0; i < stonemembers; ++i)
 				{
@@ -226,43 +229,71 @@ int main()
 						if(CheckStone(check, mousePosition))
 						{
 							//Überprüfen ob wählbar
-							myposition = stone[i].GetTablePosition();
+							myposition2 = stone[i].GetTablePosition();
+
 							for(int j = 0; j < stonemembers; ++j)
 							{
 								if(j != i)
 								{
 									if(stone[j].SteinKontrollieren())
 									{
-										position = stone[j].GetTablePosition();
-										if(position.z == myposition.z)
+										position2 = stone[j].GetTablePosition();
+										if(myposition2.y1 == position2.y1 || myposition2.y1 == position2.y2)
 										{	
-											if(position.y == myposition.y)
+											if(myposition2.x1 == position2.x1 || myposition2.x1 == position2.x2 || myposition2.x2 == position2.x1 || myposition2.x2 == position2.x2)
 											{
-												if(position.x == myposition.x - 1)
-													++nachbarn;
-												if(position.x == myposition.x + 1)
-													++nachbarn;
+												if(myposition2.z < position2.z)
+												{
+													nachbarl = true;
+													nachbarr = true;
+													break;
+												}
+											}
+
+											if(myposition2.z == position2.z)
+											{
+												if(position2.x1 == myposition2.x1 - 1)
+													nachbarl = true;
+												if(position2.x1 == myposition2.x1 + 1)
+													nachbarr = true;
+												if(position2.x2 == myposition2.x1 - 1)
+													nachbarl = true;
+												if(position2.x2 == myposition2.x1 + 1)
+													nachbarr = true;
+												
+												if(myposition2.x2 != -1)
+												{
+													if(position2.x1 == myposition2.x2 - 1)
+														nachbarl = true;
+													if(position2.x1 == myposition2.x2 + 1)
+														nachbarr = true;
+													if(position2.x2 == myposition2.x2 - 1)
+														nachbarl = true;
+													if(position2.x2 == myposition2.x2 + 1)
+														nachbarr = true;
+												
+												}												
 											}
 										}
 									}
 								}
 							}
-							
-							
+						
+																									
 							switch(ausgewaehlt)
 							{
-								case 0:
-									if(nachbarn < 2)
+								case false:
+									if(!nachbarl || !nachbarr)
 									{
 										value = stone[i].GetStoneValue();
 										stonenumber = i;
 										std::cout<<"Ausgewaehlt: "<<stonenumber<<"\n";
-										ausgewaehlt = 1;
+										ausgewaehlt = true;
 									}
 									break;
-								
-								case 1:
-									if(nachbarn < 2)
+							
+								case true:
+									if(!nachbarl || !nachbarr)
 									{
 										if(stone[i].GetStoneValue() == value && i != stonenumber) //wenn zwei gleiche Steine -> werden entfernt
 										{
@@ -271,18 +302,18 @@ int main()
 											nochVorhanden -= 2;
 										}
 									}
-									
+								
 									value = 0;
 									stonenumber = -1;
-									ausgewaehlt = 0;									
+									ausgewaehlt = false;									
 									break;								
 							}
 						}
-					}
+					}					
 				}
 			}
-		}		
-
+		}
+		
 		window.clear();
 		//window.draw(background);
 		for(i = 0; i < stonemembers; ++i)
