@@ -1,8 +1,12 @@
-﻿Der Buildvorgang wurde am 18.12.2014 09:35:49 gestartet.
+﻿Der Buildvorgang wurde am 12.01.2015 20:51:07 gestartet.
      1>Projekt "C:\Users\Christoph\Documents\FH\GADEL\Mafhong\Mafhong\Mafhong\Mafhong.vcxproj" auf Knoten "2", Build Ziel(e).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Users\Christoph\Documents\FH\GADEL\Mafhong\SFML-2.1\include" /ZI /nologo /W4 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
+     1>c:\users\christoph\documents\fh\gadel\mafhong\mafhong\mafhong\main.cpp(287): warning C4244: 'Argument': Konvertierung von 'int' in 'float', möglicher Datenverlust
+     1>c:\users\christoph\documents\fh\gadel\mafhong\mafhong\mafhong\main.cpp(299): warning C4244: 'Argument': Konvertierung von 'int' in 'float', möglicher Datenverlust
+     1>c:\users\christoph\documents\fh\gadel\mafhong\mafhong\mafhong\main.cpp(311): warning C4244: 'Argument': Konvertierung von 'int' in 'float', möglicher Datenverlust
+     1>c:\users\christoph\documents\fh\gadel\mafhong\mafhong\mafhong\main.cpp(341): warning C4244: 'Argument': Konvertierung von 'int' in 'float', möglicher Datenverlust
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Christoph\Documents\FH\GADEL\Mafhong\Mafhong\Debug\Mafhong.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\Christoph\Documents\FH\GADEL\Mafhong\SFML-2.1\lib" "sfml-main-d.lib" "sfml-graphics-d.lib" "sfml-window-d.lib" "sfml-system-d.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Christoph\Documents\FH\GADEL\Mafhong\Mafhong\Debug\Mafhong.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Christoph\Documents\FH\GADEL\Mafhong\Mafhong\Debug\Mafhong.lib" /MACHINE:X86 Debug\main.obj
          Mafhong.vcxproj -> C:\Users\Christoph\Documents\FH\GADEL\Mafhong\Mafhong\Debug\Mafhong.exe
@@ -10,4 +14,4 @@
 
 Build erfolgreich.
 
-Verstrichene Zeit 00:00:02.35
+Verstrichene Zeit 00:00:02.33

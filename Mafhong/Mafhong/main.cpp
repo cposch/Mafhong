@@ -1,6 +1,11 @@
 #include<SFML\Graphics.hpp>
 #include<conio.h>
+#include<stdlib.h>
 #include<iostream>
+#include<string>
+
+//Stein
+float scale = 2.74f;
 
 class Position
 {
@@ -15,27 +20,51 @@ public:
 class Stone
 {
 public:
-	sf::ConvexShape stone;
+	sf::RectangleShape stonepicture;
+	sf::ConvexShape stonesite;
+	sf::ConvexShape stonefront;
 	
 	Stone()
 	{
-		stone.setPointCount(6);
-		stone.setPoint(0, sf::Vector2f(0,0));
-		stone.setPoint(1, sf::Vector2f(0,30));
-		stone.setPoint(2, sf::Vector2f(1,31));
-		stone.setPoint(3, sf::Vector2f(23,31));
-		stone.setPoint(4, sf::Vector2f(23,1));
-		stone.setPoint(5, sf::Vector2f(22,0));
+		stonepicture.setSize(sf::Vector2f(22,30));
 
-		stone.setScale(5,5);
+		stonesite.setPointCount(4);
+		stonesite.setPoint(0, sf::Vector2f(22,0));
+		stonesite.setPoint(1, sf::Vector2f(22,30));
+		stonesite.setPoint(2, sf::Vector2f(23,31));
+		stonesite.setPoint(3, sf::Vector2f(23,1));
+		
+		stonefront.setPointCount(4);
+		stonefront.setPoint(0, sf::Vector2f(0,30));
+		stonefront.setPoint(1, sf::Vector2f(22,30));
+		stonefront.setPoint(2, sf::Vector2f(23,31));
+		stonefront.setPoint(3, sf::Vector2f(1,31));
+		
+		stonepicture.setScale(scale, scale);
+		stonefront.setScale(scale, scale);
+		stonesite.setScale(scale, scale);
+
+		stonesite.setOutlineThickness(0.3f);
+		stonefront.setOutlineThickness(0.3f);
+		stonepicture.setOutlineThickness(0.5f);
+
 	}
 
 	void SetColor(const sf::Color &color)
 	{
-		stone.setFillColor(color);
+		stonepicture.setFillColor(color);
+		stonesite.setFillColor(color);
+		stonefront.setFillColor(color);
 	}
 
-	void SetTablePosition(int x1, int y1, int x2 = -1, int y2 = -1, int z = 1)
+	void SetOutLineColor(const sf::Color &color)
+	{
+		stonesite.setOutlineColor(color);
+		stonefront.setOutlineColor(color);
+		stonepicture.setOutlineColor(color);
+	}
+
+	void SetTablePosition(int x1, int y1, int x2 = -1, int y2 = -1, int z = 0)
 	{
 		tp.x1 = x1;
 		tp.x2 = x2;
@@ -51,22 +80,19 @@ public:
 
 	void SetPosition(float x, float y)
 	{
-		stone.setPosition(x,y);
+		stonepicture.setPosition(x,y);
+		stonesite.setPosition(x,y);
+		stonefront.setPosition(x,y);
 	}
 
 	sf::Vector2i GetPosition()
 	{
 		sf::Vector2i stonePosition;
-		stonePosition.x = static_cast<int>(stone.getPosition().x);
-		stonePosition.y = static_cast<int>(stone.getPosition().y);
+		stonePosition.x = static_cast<int>(stonefront.getPosition().x);
+		stonePosition.y = static_cast<int>(stonefront.getPosition().y);
 
 		return stonePosition;
 	}
-	
-	/*void SetTexture(const sf::Texture texture)
-	{
-		stone.setTexture(texture);
-	}*/
 
 	void SetStoneValue(unsigned int _value)
 	{
@@ -93,41 +119,44 @@ public:
 		return vorhanden;
 	}
 
+	/*void SetTexture(sf::Texture *texture)
+	{
+		stonepicture.setTexture(texture);
+	}*/
+
 private:
 	unsigned int value;
-	sf::Vector3i tablePosition;
-	sf::Vector2i tablePosition2;
 	Position tp;
 	bool vorhanden;
 };
 
 bool CheckStone(sf::Vector2i stoneposition, sf::Vector2i mouseposition)
 {
-	if((mouseposition.x >= stoneposition.x) && (mouseposition.x < (stoneposition.x + (22*5))))
-		if ((mouseposition.y >= stoneposition.y) && (mouseposition.y < (stoneposition.y + (30*5))))
+	if((mouseposition.x >= stoneposition.x) && (mouseposition.x < (stoneposition.x + (22*scale))))
+		if ((mouseposition.y >= stoneposition.y) && (mouseposition.y < (stoneposition.y + (30*scale))))
 			return true;
 	
 	return false;
 }
 
+
 int main()
 {	
-	const int stonemembers = 8;
-	int nochVorhanden = stonemembers;
 	bool nachbarl = false;
 	bool nachbarr = false;
-	sf::Vector3i myposition;
-	sf::Vector3i position;
-	Position myposition2;
-	Position position2;
+	Position myposition;
+	Position position;
 	sf::Vector2i mousePosition;
 	int i;
+	int j = 0;
+	int reihe = 0;
+	int hoehe = 0;
 	sf::Vector2i check;
 	unsigned int value = 0;
 	int stonenumber = -1;
 	bool ausgewaehlt = false;
 
-	sf::RenderWindow window(sf::VideoMode(800, 600), "Mafhong");
+	sf::RenderWindow window(sf::VideoMode(1280, 720), "Mafhong");
 	window.setFramerateLimit(60);
 
 	/*sf::Texture backgroundTexture;
@@ -143,62 +172,201 @@ int main()
 	sf::Sprite background;
 	background.setTexture(backgroundTexture);*/
 
-
-	/*sf::Texture SteinBambus1Texture;
-	if(!SteinBambus1Texture.loadFromFile("Stone\\Bambus_1.jpg", sf::IntRect(0, 0, 22, 30)))
-	{	
-		return -1;
-	}
-	else
-	{	
-		std::cout<<"Stein Bambus 1 geladen";
-	}*/
-
+//Steintexture laden
+	sf::Texture SteinTexture[36];
+	int zaehler = 1;
+	std::string nummer;
+	std::string stein;
 	
-	Stone stone[stonemembers];
-	stone[0].SetColor(sf::Color::White);
-    stone[0].SetPosition(10,10);
-	stone[0].SetStoneValue(1);
-	stone[0].SetTablePosition(1,1);
-	//stone[0].SetTexture(SteinBambus1Texture);
-	//stone[0].stone.setTexture(SteinBambus1Texture);
-	stone[2].SetColor(sf::Color::White);
-    stone[2].SetPosition(10,175);
-	stone[2].SetStoneValue(1);
-	stone[2].SetTablePosition(1,2);
-	
-	stone[1].SetColor(sf::Color::Blue);
-	stone[1].SetPosition(125,10);
-	stone[1].SetStoneValue(2);
-	stone[1].SetTablePosition(2,1);
-	stone[3].SetColor(sf::Color::Blue);
-	stone[3].SetPosition(125,175);
-	stone[3].SetStoneValue(2);
-	stone[3].SetTablePosition(2,2);
+	for(i=0; i<36; ++i, ++zaehler)
+	{		
+		nummer = std::to_string(zaehler);
 
-	stone[4].SetColor(sf::Color::Red);
-	stone[4].SetPosition(240,10);
-	stone[4].SetStoneValue(3);
-	stone[4].SetTablePosition(3,1);
-	stone[5].SetColor(sf::Color::Red);
-	stone[5].SetPosition(240,175);
-	stone[5].SetStoneValue(3);
-	stone[5].SetTablePosition(3,2);
+		if(i<9)
+			stein = "Bambus_" + nummer + ".jpg";
+		else
+		{
+			if(i>=9 && i<=17)
+				stein = "Kreis_" + nummer + ".jpg";
+			else
+			{
+				if(i>=18 && i<=26)
+					stein = "Zahl_" + nummer + ".jpg";
+				else
+					stein = "Special_" + nummer + ".jpg";				
+			}
+		}
 
-	stone[6].SetColor(sf::Color::Magenta);
-	stone[6].SetPosition(355,10);
-	stone[6].SetStoneValue(4);
-	stone[6].SetTablePosition(4,1);
-	stone[7].SetColor(sf::Color::Magenta);
-	stone[7].SetPosition(355,175);
-	stone[7].SetStoneValue(4);
-	stone[7].SetTablePosition(4,2);
+		if(!SteinTexture[i].loadFromFile(stein, sf::IntRect(0, 0, 22, 30)))
+		{	
+			return -1;
+		}
+		else
+		{	
+			std::cout<<stein<<" geladen.\n";
+		}
 
-	for (i = 0; i < stonemembers; ++i)
-	{
-		stone[i].SteinSetzen();
+		if(zaehler == 9)
+			zaehler = 0;
 	}
+	
+//Leveldisgn
 
+	//const int maxlevel = 1;
+	int level = 1;
+	//const int stonemembers = 8;
+	int stonemembers = 144;
+	Stone stone[144];
+	
+	//sf::Vector2i levelTablePosition[stonemembers];
+	//sf::Vector2i levelPosition[stonemembers];
+	
+	//sf::Vector2i[8];
+	
+	
+	if(level == 0)
+	{		
+		stone[0].SetColor(sf::Color::White);
+		stone[0].SetPosition(10,10);
+		stone[0].SetStoneValue(1);
+		stone[0].SetTablePosition(1,1);
+		//stone[0].SetTexture(SteinBambus1Texture);
+		//stone[0].stonepicture.setTexture(SteinBambus1Texture);
+		stone[2].SetColor(sf::Color::White);
+		//stone[2].SetPosition(10,175);
+		stone[2].SetPosition(10,105);
+		stone[2].SetStoneValue(1);
+		stone[2].SetTablePosition(1,2);
+	
+		stone[1].SetColor(sf::Color::Blue);
+		stone[1].SetPosition(125,10);
+		stone[1].SetStoneValue(2);
+		stone[1].SetTablePosition(2,1);
+		stone[3].SetColor(sf::Color::Blue);
+		stone[3].SetPosition(125,175);
+		stone[3].SetStoneValue(2);
+		stone[3].SetTablePosition(2,2);
+	
+		stone[4].SetColor(sf::Color::Red);
+		stone[4].SetPosition(240,10);
+		stone[4].SetStoneValue(3);
+		stone[4].SetTablePosition(3,1);
+		stone[5].SetColor(sf::Color::Red);
+		stone[5].SetPosition(240,175);
+		stone[5].SetStoneValue(3);
+		stone[5].SetTablePosition(3,2);
+
+		stone[6].SetColor(sf::Color::Magenta);
+		stone[6].SetPosition(355,10);
+		stone[6].SetStoneValue(4);
+		stone[6].SetTablePosition(4,1);
+		stone[7].SetColor(sf::Color::Magenta);
+		stone[7].SetPosition(355,175);
+		stone[7].SetStoneValue(4);
+		stone[7].SetTablePosition(4,2);
+	}
+	
+	if(level == 1)
+	{		
+		hoehe = 0;
+		stone[0].SetTablePosition(1, 3, -1, 4);
+		stone[0].SetPosition((63 + 10), (85*3 + 52.5));
+		stone[0].SteinSetzen();
+		j = 1;
+						
+		while(j < stonemembers && hoehe < 4)
+		{			
+			//hoehe=0: R0,R7:2-13, R1,R6: 4-11, R2,R5: 3-12, R3,R4: 2-13 + (R3+R4,1)+(R3+R4,14)+(R3+R4,15)
+			if(hoehe == 0)
+			{
+				if(reihe == 0 || reihe == 3 || reihe == 4 || reihe == 7)
+				{
+					for(i = 2; i <= 13; ++i, ++j)
+					{	
+						stone[j].SetTablePosition(i, reihe);
+						stone[j].SetPosition((63*i + 10), (85*reihe + 10));
+						stone[j].SteinSetzen();
+					}
+					
+					++reihe;
+				}
+
+				if(reihe == 1 || reihe == 6)
+				{
+					for(i = 4; i <= 11; ++i, ++j)
+					{	
+						stone[j].SetTablePosition(i, reihe);
+						stone[j].SetPosition((63*i+10), (85*reihe + 10));
+						stone[j].SteinSetzen();
+					}
+					
+					++reihe;
+				}
+
+				if(reihe == 2 || reihe == 5)
+				{
+					for(i = 3; i <= 12; ++i, ++j)
+					{	
+						stone[j].SetTablePosition(i, reihe);
+						stone[j].SetPosition((63*i+10), (85*reihe + 10));
+						stone[j].SteinSetzen();
+					}
+
+					++reihe;
+				}
+
+				if(reihe == 8)
+				{	
+					stone[j].SetTablePosition(14, 3, -1, 4);
+					stone[j].SetPosition((63*14 + 10), (85*3 + 52.5));
+					stone[j].SteinSetzen();
+					++j;
+					stone[j].SetTablePosition(15, 4, -1, 5);
+					stone[j].SetPosition((63*15 + 10), (85*3 + 52.5));
+					stone[j].SteinSetzen();
+					++j;
+
+					reihe = 1;
+					++hoehe;
+					//hoehe = 4;
+				}
+			}
+				
+			//hoehe=1: R1-R6: 5-10
+			if(hoehe == 1)
+			{
+				for(i = 5; i <= 10; ++i, ++j)
+				{	
+					stone[j].SetTablePosition(i, reihe, -1, -1, 1);
+					stone[j].SetPosition((63*i + 8), (85*reihe + 8));
+					stone[j].SteinSetzen();
+				}
+					
+				if(reihe == 6)
+				{	
+					reihe = 2;
+					//++hoehe;
+					hoehe = 4;
+				}
+				else
+					++reihe;
+			}
+
+			//hoehe=2: R2-R5: 6-9
+
+			//hoehe=3: R3-R4: 7-8
+			
+			//hoehe=4: (R3+R4, 7+8)
+			if(hoehe == 4)
+			{
+				stone[j].SetTablePosition(4, 7, 5, 8, 4);
+				//stone[j].SteinSetzen();
+			}
+		}
+		stonemembers = j;
+	}	
+
+	int nochVorhanden = stonemembers;
 
 	while (window.isOpen())
     {
@@ -229,49 +397,64 @@ int main()
 						if(CheckStone(check, mousePosition))
 						{
 							//Überprüfen ob wählbar
-							myposition2 = stone[i].GetTablePosition();
+							myposition = stone[i].GetTablePosition();
 
-							for(int j = 0; j < stonemembers; ++j)
+							for(j = stonemembers-1; j >= 0; --j)
 							{
 								if(j != i)
 								{
 									if(stone[j].SteinKontrollieren())
 									{
-										position2 = stone[j].GetTablePosition();
-										if(myposition2.y1 == position2.y1 || myposition2.y1 == position2.y2)
+										position = stone[j].GetTablePosition();
+										
+										if(myposition.y1 == position.y1 || myposition.y1 == position.y2)
 										{	
-											if(myposition2.x1 == position2.x1 || myposition2.x1 == position2.x2 || myposition2.x2 == position2.x1 || myposition2.x2 == position2.x2)
+											if(myposition.x1 == position.x1 || myposition.x1 == position.x2)
 											{
-												if(myposition2.z < position2.z)
+												if(myposition.x2!=-1)
 												{
-													nachbarl = true;
-													nachbarr = true;
-													break;
+													if(myposition.x2 == position.x1 || myposition.x2 == position.x2)
+													{
+														if(myposition.z < position.z)
+														{
+															nachbarl = true;
+															nachbarr = true;
+															break;
+														}
+													}
+												}
+												else
+												{
+													if(myposition.z < position.z)
+													{
+														nachbarl = true;
+														nachbarr = true;
+														break;
+													}
 												}
 											}
 
-											if(myposition2.z == position2.z)
+											if(myposition.z == position.z)
 											{
-												if(position2.x1 == myposition2.x1 - 1)
+												if(position.x1 == myposition.x1 - 1)
 													nachbarl = true;
-												if(position2.x1 == myposition2.x1 + 1)
+												if(position.x1 == myposition.x1 + 1)
 													nachbarr = true;
-												if(position2.x2 == myposition2.x1 - 1)
+												if(position.x2 == myposition.x1 - 1)
 													nachbarl = true;
-												if(position2.x2 == myposition2.x1 + 1)
+												if(position.x2 == myposition.x1 + 1)
 													nachbarr = true;
 												
-												if(myposition2.x2 != -1)
+												if(myposition.x2 != -1)
 												{
-													if(position2.x1 == myposition2.x2 - 1)
+													if(position.x1 == myposition.x2 - 1)
 														nachbarl = true;
-													if(position2.x1 == myposition2.x2 + 1)
+													if(position.x1 == myposition.x2 + 1)
 														nachbarr = true;
-													if(position2.x2 == myposition2.x2 - 1)
+													if(position.x2 == myposition.x2 - 1)
 														nachbarl = true;
-													if(position2.x2 == myposition2.x2 + 1)
+													if(position.x2 == myposition.x2 + 1)
 														nachbarr = true;
-												
 												}												
 											}
 										}
@@ -321,22 +504,23 @@ int main()
 			if(stone[i].SteinKontrollieren())
 			{	if(i == stonenumber)
 				{
-					stone[i].stone.setOutlineThickness(0.5f);
-					stone[i].stone.setOutlineColor(sf::Color::Yellow);
+					stone[i].SetOutLineColor(sf::Color::Yellow);
 				}
 				else
 				{
-					stone[i].stone.setOutlineThickness(0.0f);
+					stone[i].SetOutLineColor(sf::Color::Black);
 				}
 
-				window.draw(stone[i].stone);
+				window.draw(stone[i].stonepicture);
+				window.draw(stone[i].stonesite);
+				window.draw(stone[i].stonefront);
 			}
 		}
 
 		window.display();
 		
-		//if(nochVorhanden <= 0) //Schließt Fenster wenn kein Stein mehr übrig ist.
-		//	window.close();
+		if(nochVorhanden <= 0) //Schließt Fenster wenn kein Stein mehr übrig ist.
+			window.close();
     }
 
     return 0;
