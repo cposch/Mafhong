@@ -147,8 +147,10 @@ int main()
 	Position myposition;
 	Position position;
 	sf::Vector2i mousePosition;
-	int i;
+	int i = 0;
 	int j = 0;
+	int check_z = -1;
+	int check_stonenumber = -1;
 	int reihe = 0;
 	int hoehe = 0;
 	sf::Vector2i check;
@@ -328,7 +330,6 @@ int main()
 
 					reihe = 1;
 					++hoehe;
-					//hoehe = 4;
 				}
 			}
 				
@@ -345,25 +346,55 @@ int main()
 				if(reihe == 6)
 				{	
 					reihe = 2;
-					//++hoehe;
-					hoehe = 4;
+					++hoehe;
 				}
 				else
 					++reihe;
 			}
 
 			//hoehe=2: R2-R5: 6-9
-
+			if(hoehe == 2)
+			{
+				for(i = 6; i <= 9; ++i, ++j)
+				{	
+					stone[j].SetTablePosition(i, reihe, -1, -1, 2);
+					stone[j].SetPosition((63*i + 6), (85*reihe + 6));
+					stone[j].SteinSetzen();
+				}
+					
+				if(reihe == 5)
+				{	
+					reihe = 3;
+					++hoehe;
+				}
+				else
+					++reihe;
+			}
 			//hoehe=3: R3-R4: 7-8
-			
+			if(hoehe == 3)
+			{
+				for(i = 7; i <= 8; ++i, ++j)
+				{	
+					stone[j].SetTablePosition(i, reihe, -1, -1, 3);
+					stone[j].SetPosition((63*i + 4), (85*reihe + 4));
+					stone[j].SteinSetzen();
+				}
+					
+				if(reihe == 4)
+					++hoehe;
+				else
+					++reihe;
+			}
 			//hoehe=4: (R3+R4, 7+8)
 			if(hoehe == 4)
 			{
-				stone[j].SetTablePosition(4, 7, 5, 8, 4);
-				//stone[j].SteinSetzen();
+				stone[j].SetTablePosition(7, 3, 8, 4, 4);
+				stone[j].SetPosition((63*7+33.5), (85*7+44.5));
+				stone[j].SteinSetzen();
 			}
 		}
 		stonemembers = j;
+		std::cout<<j<<"\n";
 	}	
 
 	int nochVorhanden = stonemembers;
@@ -389,111 +420,124 @@ int main()
 				nachbarl = false;
 				nachbarr = false;
 				
-				for(i = 0; i < stonemembers; ++i)
+				check_z = -1;
+
+				for(i=0; i<stonemembers; ++i)
 				{
 					if(stone[i].SteinKontrollieren())
 					{
 						check = stone[i].GetPosition();
+												
 						if(CheckStone(check, mousePosition))
 						{
-							//Überprüfen ob wählbar
 							myposition = stone[i].GetTablePosition();
-
-							for(j = 0; j < stonemembers; ++j)
+							
+							if(check_z < myposition.z)
 							{
-								if(j != i)
-								{
-									if(stone[j].SteinKontrollieren())
-									{
-										position = stone[j].GetTablePosition();
-										
-										if(myposition.y1 == position.y1 || myposition.y1 == position.y2)
-										{	
-											if(myposition.x1 == position.x1 || myposition.x1 == position.x2)
-											{
-												if(myposition.x2!=-1)
-												{
-													if(myposition.x2 == position.x1 || myposition.x2 == position.x2)
-													{
-														if(myposition.z < position.z)
-														{
-															nachbarl = true;
-															nachbarr = true;
-															break;
-														}
-													}
-												}
-												else
-												{
-													if(myposition.z < position.z)
-													{
-														nachbarl = true;
-														nachbarr = true;
-														break;
-													}
-												}
-											}
+								check_stonenumber = i;
+								check_z = myposition.z;
 
-											if(myposition.z == position.z)
+								std::cout<<check_stonenumber<<" "<<check_z<<"\n";
+							}
+						}
+					}
+				}
+
+				myposition = stone[check_stonenumber].GetTablePosition();
+
+				for(j = 0; j < stonemembers; ++j)
+				{
+					if(j != check_stonenumber)
+					{
+						if(stone[j].SteinKontrollieren())
+						{
+							position = stone[j].GetTablePosition();
+							
+							if(myposition.y1 == position.y1 || myposition.y1 == position.y2)
+							{	
+								if(myposition.x1 == position.x1 || myposition.x1 == position.x2)
+								{
+									if(myposition.x2!=-1)
+									{
+										if(myposition.x2 == position.x1 || myposition.x2 == position.x2)
+										{
+											if(myposition.z < position.z)
 											{
-												if(position.x1 == myposition.x1 - 1)
-													nachbarl = true;
-												if(position.x1 == myposition.x1 + 1)
-													nachbarr = true;
-												if(position.x2 == myposition.x1 - 1)
-													nachbarl = true;
-												if(position.x2 == myposition.x1 + 1)
-													nachbarr = true;
-												
-												if(myposition.x2 != -1)
-												{
-													if(position.x1 == myposition.x2 - 1)
-														nachbarl = true;
-													if(position.x1 == myposition.x2 + 1)
-														nachbarr = true;
-													if(position.x2 == myposition.x2 - 1)
-														nachbarl = true;
-													if(position.x2 == myposition.x2 + 1)
-														nachbarr = true;
-												}												
+												nachbarl = true;
+												nachbarr = true;
+												break;
 											}
+										}
+									}
+									else
+									{
+										if(myposition.z < position.z)
+										{
+											nachbarl = true;
+											nachbarr = true;
+											break;
 										}
 									}
 								}
-							}
 
-							switch(ausgewaehlt)
-							{
-								case false:
-									if(!nachbarl || !nachbarr)
+								if(myposition.z == position.z)
+								{
+									if(position.x1 == myposition.x1 - 1)
+										nachbarl = true;
+									if(position.x1 == myposition.x1 + 1)
+										nachbarr = true;
+									if(position.x2 == myposition.x1 - 1)
+										nachbarl = true;
+									if(position.x2 == myposition.x1 + 1)
+										nachbarr = true;
+												
+									if(myposition.x2 != -1)
 									{
-										value = stone[i].GetStoneValue();
-										stonenumber = i;
-										std::cout<<"Ausgewaehlt: "<<stonenumber<<"\n";
-										ausgewaehlt = true;
-									}
-									break;
-							
-								case true:
-									if(!nachbarl || !nachbarr)
-									{
-										if(stone[i].GetStoneValue() == value && i != stonenumber) //wenn zwei gleiche Steine -> werden entfernt
-										{
-											stone[stonenumber].SteinEntfernen();
-											stone[i].SteinEntfernen();
-											nochVorhanden -= 2;
-										}
-									}
-								
-									value = 0;
-									stonenumber = -1;
-									ausgewaehlt = false;									
-									break;								
+										if(position.x1 == myposition.x2 - 1)
+											nachbarl = true;
+										if(position.x1 == myposition.x2 + 1)
+											nachbarr = true;
+										if(position.x2 == myposition.x2 - 1)
+											nachbarl = true;
+										if(position.x2 == myposition.x2 + 1)
+											nachbarr = true;
+									}												
+								}
 							}
 						}
-					}					
+					}
 				}
-			}
+
+				switch(ausgewaehlt)
+				{
+					case false:
+						if(!nachbarl || !nachbarr)
+						{
+							value = stone[check_stonenumber].GetStoneValue();
+							stonenumber = check_stonenumber;
+							std::cout<<"Ausgewaehlt: "<<stonenumber<<"\n";
+							ausgewaehlt = true;
+						}
+						break;
+					
+					case true:
+						if(!nachbarl || !nachbarr)
+						{
+							if(stone[check_stonenumber].GetStoneValue() == value && check_stonenumber != stonenumber) //wenn zwei gleiche Steine -> werden entfernt
+							{
+								stone[stonenumber].SteinEntfernen();
+								stone[check_stonenumber].SteinEntfernen();
+								nochVorhanden -= 2;
+							}
+						}
+								
+						value = 0;
+						stonenumber = -1;
+						check_stonenumber = -1;
+						ausgewaehlt = false;									
+						break;								
+				}
+			}		
 		}
 		
 		window.clear();
