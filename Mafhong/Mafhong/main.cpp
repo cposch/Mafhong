@@ -399,7 +399,7 @@ int main()
 							//Überprüfen ob wählbar
 							myposition = stone[i].GetTablePosition();
 
-							for(j = stonemembers-1; j >= 0; --j)
+							for(j = 0; j < stonemembers; ++j)
 							{
 								if(j != i)
 								{
@@ -461,8 +461,7 @@ int main()
 									}
 								}
 							}
-						
-																									
+
 							switch(ausgewaehlt)
 							{
 								case false:
