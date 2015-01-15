@@ -157,6 +157,7 @@ int main()
 	unsigned int value = 0;
 	int stonenumber = -1;
 	bool ausgewaehlt = false;
+	int randomzahl = 0;
 
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "Mafhong");
 	window.setFramerateLimit(60);
@@ -323,7 +324,7 @@ int main()
 					stone[j].SetPosition((63*14 + 10), (85*3 + 52.5));
 					stone[j].SteinSetzen();
 					++j;
-					stone[j].SetTablePosition(15, 4, -1, 5);
+					stone[j].SetTablePosition(15, 3, -1, 4);
 					stone[j].SetPosition((63*15 + 10), (85*3 + 52.5));
 					stone[j].SteinSetzen();
 					++j;
@@ -389,12 +390,13 @@ int main()
 			if(hoehe == 4)
 			{
 				stone[j].SetTablePosition(7, 3, 8, 4, 4);
-				stone[j].SetPosition((63*7+33.5), (85*7+44.5));
+				stone[j].SetPosition((63*7+33.5), (85*3+44.5));
 				stone[j].SteinSetzen();
 			}
 		}
-		stonemembers = j;
-		std::cout<<j<<"\n";
+
+		//Steinwerte zuweisen
+		//randomzahl = rand() % 36;
 	}	
 
 	int nochVorhanden = stonemembers;
@@ -545,7 +547,8 @@ int main()
 		for(i = 0; i < stonemembers; ++i)
 		{
 			if(stone[i].SteinKontrollieren())
-			{	if(i == stonenumber)
+			{	
+				if(i == stonenumber)
 				{
 					stone[i].SetOutLineColor(sf::Color::Yellow);
 				}
@@ -553,6 +556,8 @@ int main()
 				{
 					stone[i].SetOutLineColor(sf::Color::Black);
 				}
+				
+				//stone[i].stonepicture          //Steintextur hinzufügen
 
 				window.draw(stone[i].stonepicture);
 				window.draw(stone[i].stonesite);
